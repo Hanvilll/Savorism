@@ -88,7 +88,7 @@ public class GenericModInfo {
 
             try {
                 about.add(Text.literal(container.getMetadata().getName()).setStyle(Style.EMPTY.withColor(0xffcc00).withBold(true).withClickEvent(new ClickEvent.OpenUrl(URI.create(container.getMetadata().getContact().get("github").orElse("https://pb4.eu"))))));
-                about.add(Text.translatable("text.brewery.about.version").setStyle(Style.EMPTY.withColor(0xf7e1a7))
+                about.add(Text.translatable("text.hanvil.about.version").setStyle(Style.EMPTY.withColor(0xf7e1a7))
                         .append(Text.literal(container.getMetadata().getVersion().getFriendlyString()).setStyle(Style.EMPTY.withColor(Formatting.WHITE))));
 
                 aboutBasic.addAll(about);
@@ -100,7 +100,7 @@ public class GenericModInfo {
                 contributors.addAll(container.getMetadata().getContributors().stream().map((p) -> p.getName()).collect(Collectors.toList()));
 
                 about.add(Text.literal("")
-                        .append(Text.translatable("text.brewery.about.contributors")
+                        .append(Text.translatable("text.savorism.about.contributors")
                                 .setStyle(Style.EMPTY.withColor(Formatting.AQUA)
                                         .withHoverEvent(new HoverEvent.ShowText(
                                                 Text.literal(String.join(", ", contributors)

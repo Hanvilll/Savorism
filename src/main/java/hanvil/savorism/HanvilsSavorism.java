@@ -1,5 +1,7 @@
 package hanvil.savorism;
 
+import hanvil.savorism.block.SavorismBlocks;
+import hanvil.savorism.block.entity.SavorismBlockEntities;
 import hanvil.savorism.item.BookOfSavorismItem;
 import hanvil.savorism.item.SavorismItems;
 import hanvil.savorism.item.SavorismComponents;
@@ -38,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 public class HanvilsSavorism implements ModInitializer {
-	//public static final String MOD_ID = "hanvils-savorism";
 	public static final String MOD_ID = "hanvils-savorism";
 
 	public static final Map<Item, Identifier> CONTAINER_TO_INGMIX_MODEL = new IdentityHashMap<>();
@@ -66,14 +67,9 @@ public class HanvilsSavorism implements ModInitializer {
 		GenericModInfo.build(FabricLoader.getInstance().getModContainer(MOD_ID).get());
 		PolymerResourcePackUtils.addModAssets(HanvilsSavorism.MOD_ID);
 
-		SavorismItems.register();
 		SavorismComponents.register();
-		//BrewBlocks.register();
-		//BrewComponents.register();
-		//BrewBlockEntities.register();
-		//BrewItems.register();
-		//BrewGameRules.register();
-		//BrewNetworking.register();
+		SavorismBlockEntities.register();
+		SavorismItems.register();
 
 		var id = id("early_reload");
 
@@ -86,18 +82,8 @@ public class HanvilsSavorism implements ModInitializer {
 
 
 		ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(id, (x, y, z) -> {
-			//HanvilsSavorism.loadDrinks(x);
 			BookOfSavorismItem.build();
 		});
-
-
-		//CommandRegistrationCallback.EVENT.register(BrewCommands::register);
-
-		//UseBlockCallback.EVENT.register(BrewCauldronBlock::handleUseEvent);
-
-		/*if (FabricLoader.getInstance().isModLoaded("polydex")) {
-			PolydexCompatImpl.init();
-		}*/
 	}
 
 	public static void clearData() {

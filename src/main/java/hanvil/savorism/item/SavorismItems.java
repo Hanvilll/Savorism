@@ -1,5 +1,6 @@
 package hanvil.savorism.item;
 
+import hanvil.savorism.block.SavorismBlocks;
 import static hanvil.savorism.HanvilsSavorism.id;
 
 import eu.pb4.polymer.core.api.item.PolymerBlockItem;
@@ -17,37 +18,19 @@ import net.minecraft.text.Text;
 import java.util.function.Function;
 
 public class SavorismItems {
-    public static final Item BOOK_ITEM = register("book_of_brewery", BookOfSavorismItem::new);
+    public static final Item BOOK_ITEM = register("book_of_savorism", BookOfSavorismItem::new);
 
-
-    //public static final PolymerBlockItem BARREL_SPIGOT = register("barrel_spigot", (s) -> new PolymerBlockItem(
-    //        BrewBlocks.SPIGOT_BLOCK, s.maxCount(16).useBlockPrefixedTranslationKey(), Items.TRIPWIRE_HOOK
-    //));
-
-    //public static final DrinkItem DRINK_ITEM = register("drink_bottle", DrinkItem::new);
-    //public static final Item FAILED_DRINK_ITEM = register("failed_drink_bottle", FailedDrinkItem::new);
-    //public static final Item INGREDIENT_MIXTURE = register("ingredient_mixture", IngredientMixtureItem::new);
-    //public static final BlockTickerItem DEBUG_BLOCK_TICKER = register("debug/block_ticker", BlockTickerItem::new);
+    public static final PolymerBlockItem COOKING_STATION = register("cooking_station", (s) -> new PolymerBlockItem(
+            SavorismBlocks.COOKING_STATION_BLOCK, s.maxCount(64).useBlockPrefixedTranslationKey(), Items.SMOKER
+    ));
 
     public static final ItemGroup ITEM_GROUP = ItemGroup.create(null, -1)
-            .displayName(Text.literal("Brewery"))
-            .icon(Items.BARREL::getDefaultStack)
+            .displayName(Text.literal("Savorism"))
+            .icon(Items.GOLDEN_CARROT::getDefaultStack)
 
             .entries((ctx, e) -> {
                 e.add(BOOK_ITEM);
-                //e.add(BARREL_SPIGOT);
-
-                //for (var entry : BreweryInit.DRINK_TYPES.entrySet()) {
-                //    e.add(DrinkUtils.createDrink(entry.getKey(), 0, 10, entry.getValue().distillationRuns(), Blocks.AIR));
-                //}
-
-                /*if (BreweryInit.IS_DEV) {
-                    e.add(DEBUG_BLOCK_TICKER.create(20));
-                    e.add(DEBUG_BLOCK_TICKER.create(60 * 20));
-                    e.add(DEBUG_BLOCK_TICKER.create(60 * 60 * 20));
-                    e.add(DEBUG_BLOCK_TICKER.create(24000));
-                    e.add(DEBUG_BLOCK_TICKER.create(24000 * 7));
-                }*/
+                e.add(COOKING_STATION);
             })
             .build();
 
