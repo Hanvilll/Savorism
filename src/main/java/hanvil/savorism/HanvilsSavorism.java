@@ -74,6 +74,7 @@ public class HanvilsSavorism implements ModInitializer {
 		var id = id("early_reload");
 
 		ServerLifecycleEvents.SERVER_STARTED.addPhaseOrdering(id, Event.DEFAULT_PHASE);
+		ServerLifecycleEvents.SERVER_STARTING.register(id, HanvilsSavorism::loadFoods);
 		ServerLifecycleEvents.SERVER_STARTED.register(id, HanvilsSavorism::onServerStarted);
 		ServerLifecycleEvents.SERVER_STOPPED.register((s) -> {
 			overworld = null;
@@ -91,6 +92,9 @@ public class HanvilsSavorism implements ModInitializer {
 		containerIngredient = Ingredient.ofItems(Items.GLASS_BOTTLE);
 	}
 
+	private static void loadFoods(MinecraftServer server) {
+
+	}
 
 	private static void onServerStarted(MinecraftServer server) {
 		overworld = server.getOverworld();

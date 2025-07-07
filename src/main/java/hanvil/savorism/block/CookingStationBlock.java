@@ -92,6 +92,13 @@ public final class CookingStationBlock extends HorizontalFacingBlock implements 
         return new CookingStationBlockEntity(pos, state);
     }
 
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return CookingStationBlockEntity::ticker;
+    }
+
+
     @Override
     public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
         // TODO
