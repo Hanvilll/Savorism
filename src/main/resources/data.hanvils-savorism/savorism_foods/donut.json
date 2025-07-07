@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "unfinished_brew_effects": [
+    {
+      "effect": "minecraft:saturation",
+      "time": "60",
+      "value": "4",
+      "type": "potion"
+    }
+  ],
+  "ingredients": [
+    {
+      "item": "minecraft:wheat",
+      "count": 3
+    },
+    {
+      "item": "minecraft:sugar",
+      "count": 1
+    }
+  ],
+
+  "drinking_time": "clamp(1.6 * (7 / (max(quality, 0.1))), 1.6, 4.8)",
+  "name": {
+    "translate": "foodtype.savorism.donut"
+  },
+  "visual": {
+    "resource_pack_model": "minestar:savorism_food/donut"
+  }
+}
