@@ -4,9 +4,13 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import hanvil.savorism.HanvilsSavorism;
 import hanvil.savorism.item.Recipe;
 import hanvil.savorism.item.Recipes;
+import net.fabricmc.fabric.api.item.v1.FabricItemStack;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.type.CustomModelDataComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
@@ -14,6 +18,9 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -26,6 +33,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.component.DataComponentTypes;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -61,7 +70,7 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
 
         var cookingStation = (CookingStationBlockEntity) t;
 
-        if (cookingStation.requestUpdate) {// && world.getTime() % 20 == 0) {
+        if (cookingStation.requestUpdate) {
             cookingStation.updateAges();
         }
     }
@@ -80,8 +89,6 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
         }
 
         this.tickContents(currentTime - this.lastTicked);
-
-        //HanvilsSavorism.LOGGER.info("updateAges");
 
         this.lastTicked = currentTime;
         this.requestUpdate = false;
@@ -109,17 +116,39 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
     }
 
     public void tickContents(double l) {
-        //HanvilsSavorism.LOGGER.info("tickContents");
-        //HanvilsSavorism.LOGGER.info(String.valueOf(l));
         if (this.isOnCraft) {
             this.nextCraftIteration(l);
         }
-        /*else if (this.waterLevel > 0 || this.tryAddWaterLevel()) {
+        else if (this.waterLevel > 0 || this.tryAddWaterLevel()) {
             Recipe availableRecipe = this.getAvailableRecipe();
             if (availableRecipe != null && this.isResultSlotAvailable(availableRecipe)) {
                 this.startCraftProcess(availableRecipe);
             }
-        }*/
+        }
+        ItemStack stack = new ItemStack(Items.MACE, 1);
+
+        ArrayList<String> z = new ArrayList<>();
+
+        z.add("bat");
+        CustomModelDataComponent tag = new CustomModelDataComponent(new ArrayList<Float>(), new ArrayList<Boolean>(), z, new ArrayList<Integer>());
+        //NbtList list = new NbtList();
+        //list.add(NbtString.of("bat"));
+        //tag.strings().add("bat");
+        stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, tag);
+
+        //NbtComponent.set(DataComponentTypes.CUSTOM_MODEL_DATA, stack, (NbtCompound tag2) -> tag2.put("strings", list));
+
+        //stack.set(DataComponentTypes.CUSTOM_DATA, tag);
+        //NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, tag);
+
+        //NbtComponent.set(DataComponentTypes.CUSTOM_DATA, stack, (NbtCompound tag) -> tag.putInt("CustomModelData", 42));
+
+        super.setStack(12, stack);
+        /*NbtComponent.set(
+                ComponentType.builder(),
+                stack,
+                (NbtCompound tag) -> tag.putInt("CustomModelData", 2)
+        );*/
     }
 
     private boolean tryAddWaterLevel() {
@@ -160,9 +189,12 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
         }
     }
 
+    private void updateCraftLevelPreview(int tickUntilCraft) {
+        super.setStack(26, new ItemStack(Items.STRUCTURE_VOID, tickUntilCraft));
+    }
+
     @Nullable
     private Recipe getAvailableRecipe() {
-        HanvilsSavorism.LOGGER.info("getAvailableRecipe");
         HashMap<Item, Integer> ingredientMap = new HashMap<>();
 
         for (int slot : INGREDIETN_SLOTS) {
@@ -217,9 +249,6 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
             }
             return false;
         }
-        //if (!resultStack.isEmpty() && (resultStack.getCount() + recipe.GetResult().getCount()) > resultStack.getMaxCount()) {
-        //    return false;
-        //}
     }
 
     private boolean takeAwayIngredients(Recipe recipe) {
@@ -272,8 +301,8 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
         if (!this.isOnCraft) {
             return false;
         }
-        for (Item recipeItem : recipe.GetIngredients().keySet()) {
-            int necessaryCount = recipe.GetIngredients().get(recipeItem);
+        for (Item recipeItem : this.recipe.GetIngredients().keySet()) {
+            int necessaryCount = this.recipe.GetIngredients().get(recipeItem);
 
             for (int slot : INGREDIETN_SLOTS) {
                 ItemStack ingredient = this.getStack(slot);
@@ -299,7 +328,6 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
     }
 
     private void terminateCraftProcess() {
-        HanvilsSavorism.LOGGER.info("terminateCraftProcess");
         this.recipe = null;
         this.tickUntilCraft = 0;
         this.isOnCraft = false;
@@ -308,27 +336,24 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
     }
 
     private void nextCraftIteration(double l) {
-        HanvilsSavorism.LOGGER.info("nextCraftIteration");
         while (l > 60) {
-            this.craft();
-            this.isOnCraft = false;
-            super.setStack(26, new ItemStack(Items.BARRIER, 1));
+            if (!this.craft()) {
+                return;
+            }
 
             l -= 60;
         }
 
-        this.tickUntilCraft -= l;
+        this.tickUntilCraft -= (int) l;
 
-        if (this.tickUntilCraft > 0 && this.checkCraftAvailability()) {
-            super.setStack(26, new ItemStack(Items.STRUCTURE_VOID, tickUntilCraft));
+        if (this.tickUntilCraft > 0) {
+            this.updateCraftLevelPreview(this.tickUntilCraft);
         } else {
             this.craft();
-            this.isOnCraft = false;
-            super.setStack(26, new ItemStack(Items.BARRIER, 1));
         }
     }
 
-    private void craft() {
+    private boolean craft() {
         if (this.takeAwayIngredients(this.recipe) && this.removeWaterLevel()) {
             if (this.getStack(RESULT_SLOT).isEmpty()) {
                 super.setStack(RESULT_SLOT, this.recipe.GetResult());
@@ -339,7 +364,17 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
                 ItemStack res = new ItemStack(this.recipe.GetResult().getItem(), count1+count2);
                 super.setStack(RESULT_SLOT, res);
             }
+
+            if (this.checkCraftAvailability()) {
+                this.startCraftProcess(this.recipe);
+            }
+            this.updateCraftLevelPreview(1);
+            return true;
         }
+
+        this.terminateCraftProcess();
+        this.updateCraftLevelPreview(1);
+        return false;
     }
 
     private void checkItemChanges() {
@@ -526,7 +561,6 @@ public final class CookingStationBlockEntity extends LootableContainerBlockEntit
             }
 
             CookingStationBlockEntity.this.requestUpdate();
-            //CookingStationBlockEntity.this.tickContents(0d);
             super.onTick();
         }
     }

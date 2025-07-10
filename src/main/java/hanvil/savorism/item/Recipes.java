@@ -19,16 +19,19 @@
             Map<Item, Integer> key2 = Map.of(Items.STICK, 2);
             Map<Item, Integer> key3 = Map.of(Items.COAL, 1, Items.IRON_ORE, 1);
             Map<Item, Integer> key4 = Map.of(Items.AMETHYST_SHARD, 16);
+            Map<Item, Integer> key5 = Map.of(Items.WHEAT, 2, Items.SUGAR, 1, Items.COCOA_BEANS, 1);
 
             ItemStack r_key1 = new ItemStack(Items.DIAMOND, 1);
             ItemStack r_key2 = new ItemStack(Items.OAK_PLANKS, 1);
             ItemStack r_key3 = new ItemStack(Items.NETHERITE_INGOT, 1);
             ItemStack r_key4 = new ItemStack(Items.EMERALD, 16);
+            ItemStack r_key5 = new ItemStack(Items.COOKIE, 8);
 
             resultMap.put(key1, r_key1);
             resultMap.put(key2, r_key2);
             resultMap.put(key3, r_key3);
             resultMap.put(key4, r_key4);
+            resultMap.put(key5, r_key5);
 
             return resultMap;
         }
